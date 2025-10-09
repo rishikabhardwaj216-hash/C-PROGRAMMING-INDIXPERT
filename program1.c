@@ -3,7 +3,7 @@ int main()
 {
 
     printf("My name is Rishika Bhardwaj");
-     printf("My name is Rishika Bhardwaj"); 
+    
      printf("My name is Rishika Bhardwaj");
     return 0;
 }
