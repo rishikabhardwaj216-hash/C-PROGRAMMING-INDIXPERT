@@ -136,7 +136,6 @@ void signoutpathway()
 {
     printf("Thank you so much for visiting our reservation system.\n");
 
-    signinpathway();
 }
 
 void getPhoneNumber()
@@ -205,6 +204,7 @@ int main()
                     break;
                 case 4:
                     signoutpathway();
+                    main();
                     break;
                 default:
                     printf("Invalid choice! Try again.\n");
@@ -254,6 +254,7 @@ int main()
                     break;
                 case 4:
                     signoutpathway();
+                    main();
                     break;
                 default:
                     printf("Invalid choice! Try again.\n");
