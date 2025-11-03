@@ -1,10 +1,52 @@
 #include <stdio.h>
-
+#include <string.h>
 
 int busNumber[25];
 int seats[25];
 int totalBookings = 0;
 
+char usernames[10][50];
+char passwords[10][50];
+int userCount = 0;
+
+void registration()
+{
+    char username[50], password[50];
+    printf("\n----- REGISTRATION -----\n");
+
+    printf("Enter a username: ");
+    scanf("%s", username);
+
+    printf("Enter a password: ");
+    scanf("%s", password);
+
+    strcpy(usernames[userCount], username);
+    strcpy(passwords[userCount], password);
+    userCount++;
+
+    printf("\nRegistration successful! You can now log in.\n");
+}
+
+int login()
+{
+    char username[50], password[50];
+    printf("\n----- LOGIN -----\n");
+    printf("Enter username: ");
+    scanf("%s", username);
+    printf("Enter password: ");
+    scanf("%s", password);
+
+    for (int i = 0; i < userCount; i++)
+    {
+        if (strcmp(username, usernames[i]) == 0 && strcmp(password, passwords[i]) == 0)
+        {
+            printf("\nLogin successful! Welcome, %s.\n", username);
+            return 1; 
+        }
+    }
+    printf("\nInvalid username or password.\n");
+    return 0;
+}
 
 
 void signinpathway()
@@ -25,7 +67,7 @@ void signinpathway()
     }
     else
     {
-        middle[0] = '\0'; 
+        middle[0] = '\0';
     }
 
     printf("\nEnter your last name: ");
@@ -36,7 +78,7 @@ void signinpathway()
 
 void busmenu()
 {
-    printf("\n\t *==*==** User Menu **==*==*\n");
+    printf("\n\t ====================== User Menu ======================\n");
     printf("\n1. Book a ticket\n2. Cancel a ticket\n3. Check bus status\n4. Logout\n");
 }
 
@@ -94,7 +136,6 @@ void cancelTicket()
             found = 1;
             printf("\nBooking for Bus %d (%d seat(s)) cancelled successfully.\n", busNumber[i], seats[i]);
 
-           
             for (int j = i; j < totalBookings - 1; j++)
             {
                 busNumber[j] = busNumber[j + 1];
@@ -135,12 +176,11 @@ void showBusStatus()
 void signoutpathway()
 {
     printf("Thank you so much for visiting our reservation system.\n");
-
 }
 
 void getPhoneNumber()
 {
-    long long number; 
+    long long number;
     int isValid = 0;
 
     while (!isValid)
@@ -163,115 +203,74 @@ void getPhoneNumber()
 int main()
 {
     int choice;
+    int loggedIn = 0;
 
     printf("\n\t *************** BUS RESERVATION SYSTEM ***************\n");
 
-    printf("\n-----MENU-----\n");
-    printf("1. Login\n2. Exit\n");
-    printf("\nEnter your choice: ");
-    scanf("%d", &choice);
-
-    switch (choice)
+    while (1)
     {
-    case 1:
-        signinpathway();
-
-        printf("\n\n1. Yes \n2. No \nEnter your choice: ");
+        printf("\n-----MAIN MENU-----\n");
+        printf("1. Register\n2. Login\n3. Exit\n");
+        printf("Enter your choice: ");
         scanf("%d", &choice);
 
-        if (choice == 1)
+        switch (choice)
         {
-            getPhoneNumber();
+        case 1:
+            registration();
+            break;
 
-            printf("\n\t------------You are successfully signed in------------\n");
-
-            do
+        case 2:
+            if (userCount == 0)
             {
-                busmenu();
-                printf("\nEnter your choice: ");
-                scanf("%d", &choice);
+                printf("\nNo registered users yet! Please register first.\n");
+                break;
+            }
 
-                switch (choice)
+            loggedIn = login();
+            if (loggedIn)
+            {
+                signinpathway();
+                getPhoneNumber();
+                printf("\n\t------------You are successfully signed in------------\n");
+
+                do
                 {
-                case 1:
-                    bookBus();
-                    break;
-                case 2:
-                    cancelTicket();
-                    break;
-                case 3:
-                    showBusStatus();
-                    break;
-                case 4:
-                    signoutpathway();
-                    main();
-                    break;
-                default:
-                    printf("Invalid choice! Try again.\n");
-                    break;
-                }
-            } while (choice != 4);
+                    busmenu();
+                    printf("\nEnter your choice: ");
+                    scanf("%d", &choice);
+
+                    switch (choice)
+                    {
+                    case 1:
+                        bookBus();
+                        break;
+                    case 2:
+                        cancelTicket();
+                        break;
+                    case 3:
+                        showBusStatus();
+                        break;
+                    case 4:
+                        signoutpathway();
+                        loggedIn = 0;
+                        break;
+                    default:
+                        printf("Invalid choice! Try again.\n");
+                        break;
+                    }
+                } while (loggedIn);
+            }
+            break;
+
+        case 3:
+            signoutpathway();
+            main();
+            return 0;
+
+        default:
+            printf("Invalid choice! Please try again.\n");
         }
-        else
-        {
-            do
-            {
-                printf("\nEnter your choice:\n1. Re-enter your details\n2. Exit\n");
-                printf("Enter your choice: ");
-                scanf("%d", &choice);
-
-                if (choice == 1)
-                {
-                    signinpathway();
-                }
-                else
-                {
-                    break;
-                }
-
-            } while (choice == 1);
-
-            getPhoneNumber();
-
-            printf("\n\t------------You are successfully signed in------------\n");
-
-            do
-            {
-                busmenu();
-                printf("\nEnter your choice: ");
-                scanf("%d", &choice);
-
-                switch (choice)
-                {
-                case 1:
-                    bookBus();
-                    break;
-                case 2:
-                    cancelTicket();
-                    break;
-                case 3:
-                    showBusStatus();
-                    break;
-                case 4:
-                    signoutpathway();
-                    main();
-                    break;
-                default:
-                    printf("Invalid choice! Try again.\n");
-                    break;
-                }
-            } while (choice != 4);
-        }
-        break;
-
-    case 2:
-        signoutpathway();
-        break;
-
-    default:
-        printf("Please enter a valid choice.\n");
-        break;
     }
-
-    return 0;
 }
+
