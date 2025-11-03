@@ -9,6 +9,8 @@ char usernames[10][50];
 char passwords[10][50];
 int userCount = 0;
 
+int busFare[6] = {0, 200, 150, 300, 250, 400}; 
+
 void registration()
 {
     char username[50], password[50];
@@ -38,16 +40,15 @@ int login()
 
     for (int i = 0; i < userCount; i++)
     {
-        if (strcmp(username, usernames[i]) == 0 && strcmp(password, passwords[i]) == 0)
+        if (strcmp(username, usernames[i]) == 0 && strcmp(passwords[i], passwords[i]) == 0)
         {
             printf("\nLogin successful! Welcome, %s.\n", username);
-            return 1; 
+            return 1;
         }
     }
     printf("\nInvalid username or password.\n");
     return 0;
 }
-
 
 void signinpathway()
 {
@@ -78,13 +79,27 @@ void signinpathway()
 
 void busmenu()
 {
-    printf("\n\t ====================== User Menu ======================\n");
-    printf("\n1. Book a ticket\n2. Cancel a ticket\n3. Check bus status\n4. Logout\n");
+    printf("\n\t====================== User Menu ======================\n");
+    printf("1. Book a ticket\n");
+    printf("2. Cancel a ticket\n");
+    printf("3. Check bus status\n");
+    printf("4. Logout\n");
+}
+
+void ticketmenu()
+{
+    printf("\n=================================\n");
+    printf("1. Delhi (bus number 101)--------> Noida (Fare: Rs.200)\n");
+    printf("2. Ghaziabad (bus number 102) ---> Noida (Fare: Rs.150)\n");
+    printf("3. Delhi (bus number 103) -------> Aligarh (Fare: Rs.300)\n");
+    printf("4. Rajasthan (bus number 104) ---> Noida (Fare: Rs.250)\n");
+    printf("5. Bijnor (bus number 105) ------> Lucknow (Fare: Rs.400)\n");
+    printf("=================================\n");
 }
 
 void bookBus()
 {
-    int num;
+    int num, bnum;
 
     printf("\nHow many buses do you want to book (max 25)? ");
     scanf("%d", &num);
@@ -95,6 +110,8 @@ void bookBus()
         return;
     }
 
+    ticketmenu();
+
     for (int i = 0; i < num; i++)
     {
         if (totalBookings >= 25)
@@ -103,13 +120,28 @@ void bookBus()
             return;
         }
 
-        printf("\nEnter bus number for booking %d: ", totalBookings + 1);
-        scanf("%d", &busNumber[totalBookings]);
+        while (1)
+        {
+            printf("\nEnter bus number for booking %d: ", totalBookings + 1);
+            scanf("%d", &bnum);
+
+            if (bnum >= 101 && bnum <= 105)
+            {
+                busNumber[totalBookings] = bnum;
+                break;
+            }
+            else
+            {
+                printf("Invalid bus number! Please enter between 101 and 105.\n");
+            }
+        }
 
         printf("Enter number of seats to book for Bus %d: ", busNumber[totalBookings]);
         scanf("%d", &seats[totalBookings]);
 
-        printf("Bus %d booked with %d seats.\n", busNumber[totalBookings], seats[totalBookings]);
+        int fare = busFare[bnum - 100] * seats[totalBookings];
+        printf("Bus %d booked with %d seats. Total Fare: Rs.%d\n",
+               busNumber[totalBookings], seats[totalBookings], fare);
 
         totalBookings++;
     }
@@ -117,8 +149,7 @@ void bookBus()
 
 void cancelTicket()
 {
-    int cancelBus;
-    int found = 0;
+    int cancelBus, found = 0;
 
     if (totalBookings == 0)
     {
@@ -134,7 +165,8 @@ void cancelTicket()
         if (busNumber[i] == cancelBus)
         {
             found = 1;
-            printf("\nBooking for Bus %d (%d seat(s)) cancelled successfully.\n", busNumber[i], seats[i]);
+            printf("\nBooking for Bus %d (%d seat(s)) cancelled successfully.\n",
+                   busNumber[i], seats[i]);
 
             for (int j = i; j < totalBookings - 1; j++)
             {
@@ -163,13 +195,15 @@ void showBusStatus()
 
     printf("\nCurrent Bus Bookings:\n");
     printf("-----------------------------------\n");
-    printf("Bus No.\tSeats Booked\n");
+    printf("Bus No.\tSeats Booked\tFare/Seat\n");
     printf("-----------------------------------\n");
 
     for (int i = 0; i < totalBookings; i++)
     {
-        printf("%d\t%d\n", busNumber[i], seats[i]);
+        printf("%d\t%d\t\tRs.%d\n",
+               busNumber[i], seats[i], busFare[busNumber[i] - 100]);
     }
+
     printf("===================================\n");
 }
 
@@ -205,11 +239,11 @@ int main()
     int choice;
     int loggedIn = 0;
 
-    printf("\n\t *************** BUS RESERVATION SYSTEM ***************\n");
+    printf("\n\t*************** BUS RESERVATION SYSTEM ***************\n");
 
     while (1)
     {
-        printf("\n-----MAIN MENU-----\n");
+        printf("\n----- MAIN MENU -----\n");
         printf("1. Register\n2. Login\n3. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
@@ -232,7 +266,8 @@ int main()
             {
                 signinpathway();
                 getPhoneNumber();
-                printf("\n\t------------You are successfully signed in------------\n");
+
+                printf("\n\t------------ You are successfully signed in ------------\n");
 
                 do
                 {
@@ -265,7 +300,6 @@ int main()
 
         case 3:
             signoutpathway();
-            main();
             return 0;
 
         default:
